@@ -26,6 +26,8 @@ O sistema permite o cadastro, edição, visualização e exclusão de produtores
 - **Jest/React Testing Library**: Testes unitários e de integração
 - **Vite**: Ferramenta de build e desenvolvimento
 
+## Quer ver online? [Link do projeto](https://a-griculture.netlify.app)
+
 ## 📁 Estrutura do Projeto
 
 O projeto segue uma arquitetura modular e organizada:
