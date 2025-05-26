@@ -7,6 +7,7 @@ import produtoresReducer from './slices/produtoresSlice';
 import dashboardReducer from './slices/dashboardSlice';
 import safrasReducer from './slices/safrasSlice';
 import culturasReducer from './slices/culturasSlice';
+import propriedadesReducer from './slices/propriedadesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     safras: safrasReducer,
     culturas: culturasReducer,
+    propriedades: propriedadesReducer,
   },
 });
 

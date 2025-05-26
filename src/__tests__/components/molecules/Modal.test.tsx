@@ -7,7 +7,7 @@ import Modal, { ModalFooterActions } from '../../../components/molecules/Modal';
 jest.mock('react-dom', () => {
   return {
     ...jest.requireActual('react-dom'),
-    createPortal: (node: any) => node,
+    createPortal: (node: React.ReactNode) => node,
   };
 });
 

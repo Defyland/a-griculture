@@ -9,9 +9,9 @@ import {
 import type { StyledButtonProps } from './styles/Button.styles';
 
 // Função para filtrar propriedades que não devem ir para o DOM
-const filterDOMProps = (props: Record<string, any>) => {
+const filterDOMProps = (props: Record<string, unknown>) => {
+   
   const { 
-    variant, size, fullWidth, icon, iconPosition, rounded, elevated, active, badge, isLoading,
     ...domProps 
   } = props;
   return domProps;

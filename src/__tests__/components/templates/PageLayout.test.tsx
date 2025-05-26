@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
+import type { DefaultTheme } from 'styled-components';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import PageLayout from '../../../components/templates/PageLayout';
 
@@ -12,6 +13,9 @@ jest.mock('react-router-dom', () => ({
 
 // Mock do tema para o styled-components
 const theme = {
+  fonts: {
+    primary: 'Inter, sans-serif',
+  },
   transitions: {
     fast: '0.2s ease',
     medium: '0.3s ease',
@@ -21,6 +25,8 @@ const theme = {
     background: '#F9F9F9',
     backgroundDarker: '#F1F1F1',
     textSecondary: '#666',
+    border: '#e0e0e0',
+    text: '#333',
   },
   fontSizes: {
     small: '0.875rem',
@@ -30,6 +36,7 @@ const theme = {
   fontWeights: {
     regular: 400,
     semibold: 600,
+    bold: 700,
   },
   spacing: {
     sm: '8px',
@@ -40,6 +47,7 @@ const theme = {
     xxxl: '64px',
   },
   borderRadius: {
+    medium: '6px',
     large: '8px',
   },
   grid: {
@@ -50,8 +58,10 @@ const theme = {
   breakpoints: {
     mobile: '480px',
     tablet: '768px',
+    desktop: '1024px',
   },
   shadows: {
+    card: '0 2px 4px rgba(0,0,0,0.1)',
     medium: '0 4px 6px rgba(0,0,0,0.1)',
     large: '0 10px 25px rgba(0,0,0,0.15)',
   },
@@ -72,7 +82,7 @@ const theme = {
 // Componente de renderização com tema e router
 const renderWithThemeAndRouter = (ui: React.ReactNode, { route = '/' } = {}) => {
   return render(
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme as DefaultTheme}>
       <MemoryRouter initialEntries={[route]}>
         <Routes>
           <Route path="*" element={ui} />
@@ -102,33 +112,33 @@ describe('PageLayout Component', () => {
   });
   
   test('renderiza o layout com logo e navegação', () => {
-    renderWithThemeAndRouter(
+    const { getByText, getByTestId } = renderWithThemeAndRouter(
       <PageLayout>
         <div data-testid="page-content">Conteúdo da Página</div>
       </PageLayout>
     );
     
     // Verifica a existência do logo e navegação
-    expect(screen.getByText('Challenger')).toBeInTheDocument();
-    expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    expect(screen.getByText('Produtores')).toBeInTheDocument();
-    expect(screen.getByText('Propriedades')).toBeInTheDocument();
-    expect(screen.getByText('Safras')).toBeInTheDocument();
+    expect(getByText('Challenger')).toBeInTheDocument();
+    expect(getByText('Dashboard')).toBeInTheDocument();
+    expect(getByText('Produtores')).toBeInTheDocument();
+    expect(getByText('Propriedades')).toBeInTheDocument();
+    expect(getByText('Safras')).toBeInTheDocument();
     
     // Verifica se o conteúdo da página está presente
-    expect(screen.getByTestId('page-content')).toBeInTheDocument();
-    expect(screen.getByText('Conteúdo da Página')).toBeInTheDocument();
+    expect(getByTestId('page-content')).toBeInTheDocument();
+    expect(getByText('Conteúdo da Página')).toBeInTheDocument();
   });
   
   test('exibe o rodapé com o ano atual', () => {
-    renderWithThemeAndRouter(
+    const { getByText } = renderWithThemeAndRouter(
       <PageLayout>
         <div>Conteúdo da Página</div>
       </PageLayout>
     );
     
     const currentYear = new Date().getFullYear();
-    expect(screen.getByText(new RegExp(`${currentYear} Challenger`, 'i'))).toBeInTheDocument();
+    expect(getByText(new RegExp(`${currentYear} Challenger`, 'i'))).toBeInTheDocument();
   });
   
   test('adiciona event listener de scroll na montagem e remove ao desmontar', () => {
@@ -150,15 +160,15 @@ describe('PageLayout Component', () => {
   
   test('destacar o link atual baseado na rota', () => {
     // O mock de useLocation já está retornando '/produtores'
-    renderWithThemeAndRouter(
+    const { getByText } = renderWithThemeAndRouter(
       <PageLayout>
         <div>Conteúdo da Página</div>
       </PageLayout>,
       { route: '/produtores' }
     );
     
-    const produtoresLink = screen.getByText('Produtores');
-    const dashboardLink = screen.getByText('Dashboard');
+    const produtoresLink = getByText('Produtores');
+    const dashboardLink = getByText('Dashboard');
     
     // O link 'Produtores' deve ter estilo de ativo (verificamos o estilo inline)
     expect(produtoresLink.style.fontWeight).toBe('600');

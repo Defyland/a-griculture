@@ -11,7 +11,7 @@ const setStylesToElement = (element: HTMLElement, styleObject: Record<string, st
   if (element && element.style) {
     Object.keys(styleObject).forEach(key => {
       // Usar indexação com tipo
-      (element.style as any)[key] = styleObject[key];
+      (element.style as unknown as Record<string, string>)[key] = styleObject[key];
     });
   }
   return element;

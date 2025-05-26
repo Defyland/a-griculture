@@ -7,7 +7,7 @@ import {
   Spinner,
   ContextHeader
 } from '../components';
-import type { Safra, Propriedade, Produtor, Cultura } from '../types';
+import type { Safra, Propriedade, Produtor } from '../types';
 import { safrasAPI, propriedadesAPI, produtoresAPI } from '../services/api';
 import type { BreadcrumbItem } from './types/SafraDetails.types';
 import {

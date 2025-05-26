@@ -4,16 +4,6 @@ import { jest } from '@jest/globals';
 import { Button } from '../../../components/atoms';
 import { theme } from '../../../styles/theme';
 
-// Adicionar estilos in-line manualmente para verificação
-const setStylesToElement = (element: HTMLElement, styleObject: Record<string, string>) => {
-  if (element && element.style) {
-    Object.keys(styleObject).forEach(key => {
-      (element.style as any)[key] = styleObject[key];
-    });
-  }
-  return element;
-};
-
 const renderWithTheme = (ui: React.ReactNode) => {
   return render(
     <ThemeProvider theme={theme}>{ui}</ThemeProvider>
@@ -45,8 +35,8 @@ describe('Button Component', () => {
     );
     
     const primaryBtn = screen.getByTestId('primary-button');
-    setStylesToElement(primaryBtn, { backgroundColor: theme.colors.primary });
-    expect(primaryBtn).toHaveStyle(`background-color: ${theme.colors.primary}`);
+    expect(primaryBtn).toBeInTheDocument();
+    expect(primaryBtn).toHaveTextContent('Primary');
 
     rerender(
       <ThemeProvider theme={theme}>
@@ -55,8 +45,8 @@ describe('Button Component', () => {
     );
     
     const secondaryBtn = screen.getByTestId('secondary-button');
-    setStylesToElement(secondaryBtn, { backgroundColor: theme.colors.secondary });
-    expect(secondaryBtn).toHaveStyle(`background-color: ${theme.colors.secondary}`);
+    expect(secondaryBtn).toBeInTheDocument();
+    expect(secondaryBtn).toHaveTextContent('Secondary');
 
     rerender(
       <ThemeProvider theme={theme}>
@@ -65,8 +55,8 @@ describe('Button Component', () => {
     );
     
     const dangerBtn = screen.getByTestId('danger-button');
-    setStylesToElement(dangerBtn, { backgroundColor: theme.colors.danger });
-    expect(dangerBtn).toHaveStyle(`background-color: ${theme.colors.danger}`);
+    expect(dangerBtn).toBeInTheDocument();
+    expect(dangerBtn).toHaveTextContent('Danger');
 
     rerender(
       <ThemeProvider theme={theme}>
@@ -75,16 +65,16 @@ describe('Button Component', () => {
     );
     
     const outlinedBtn = screen.getByTestId('outlined-button');
-    setStylesToElement(outlinedBtn, { backgroundColor: 'transparent' });
-    expect(outlinedBtn).toHaveStyle(`background-color: transparent`);
+    expect(outlinedBtn).toBeInTheDocument();
+    expect(outlinedBtn).toHaveTextContent('Outlined');
   });
 
   test('renders button with full width', () => {
     renderWithTheme(<Button fullWidth data-testid="full-width-button">Full Width</Button>);
     
     const fullWidthBtn = screen.getByTestId('full-width-button');
-    setStylesToElement(fullWidthBtn, { width: '100%' });
-    expect(fullWidthBtn).toHaveStyle('width: 100%');
+    expect(fullWidthBtn).toBeInTheDocument();
+    expect(fullWidthBtn).toHaveTextContent('Full Width');
   });
 
   test('renders button with custom className', () => {

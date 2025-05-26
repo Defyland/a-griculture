@@ -11,7 +11,7 @@ import {
 } from '../components';
 import { safrasAPI, propriedadesAPI } from '../services/api';
 import type { Safra, Propriedade } from '../types';
-import type { SafraExtended, BreadcrumbItem, CulturaTagProps } from './types/SafrasForm.types';
+import type { SafraExtended, BreadcrumbItem } from './types/SafrasForm.types';
 import {
   FormContainer,
   Form,

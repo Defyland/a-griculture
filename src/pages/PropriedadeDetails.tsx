@@ -168,25 +168,6 @@ const PropriedadeDetails: React.FC = () => {
     );
   };
   
-  const obterCulturasPorSafra = () => {
-    if (!propriedade || !propriedade.safras) return [];
-    
-    const culturas: Record<string, number> = {};
-    
-    propriedade.safras.forEach(safra => {
-      if (safra.culturas) {
-        safra.culturas.forEach(cultura => {
-          const nomeCultura = typeof cultura === 'string' ? cultura : cultura.nome;
-          culturas[nomeCultura] = (culturas[nomeCultura] || 0) + 1;
-        });
-      }
-    });
-    
-    return Object.entries(culturas)
-      .map(([nome, quantidade]) => ({ nome, quantidade }))
-      .sort((a, b) => b.quantidade - a.quantidade);
-  };
-  
   if (loading) {
     return (
       <PageLayout>
@@ -224,7 +205,6 @@ const PropriedadeDetails: React.FC = () => {
   const areaNaoUtilizada = propriedade.areaTotal - propriedade.areaAgricultavel - propriedade.areaVegetacao;
   const percentAgricultavel = (propriedade.areaAgricultavel / propriedade.areaTotal) * 100;
   const percentVegetacao = (propriedade.areaVegetacao / propriedade.areaTotal) * 100;
-  const percentNaoUtilizada = (areaNaoUtilizada / propriedade.areaTotal) * 100;
   
   // Dados para o gráfico de uso da terra
   const usoTerraData = [
@@ -239,7 +219,13 @@ const PropriedadeDetails: React.FC = () => {
       value: propriedade.areaVegetacao,
       color: '#2196F3',
       percentage: percentVegetacao
-    }
+    },
+    ...(areaNaoUtilizada > 0 ? [{
+      name: 'Não Utilizada',
+      value: areaNaoUtilizada,
+      color: '#FFC107',
+      percentage: (areaNaoUtilizada / propriedade.areaTotal) * 100
+    }] : [])
   ];
   
   return (
@@ -350,8 +336,8 @@ const PropriedadeDetails: React.FC = () => {
             <ImportedContentSection>
               <ImportedSectionTitle>Safras</ImportedSectionTitle>
               
-              {propriedade.safras && propriedade.safras.length > 0 ? (
-                propriedade.safras.map((safra) => (
+              {safras && safras.length > 0 ? (
+                safras.map((safra) => (
                   <SafraCard key={safra.id}>
                     <SafraHeader>
                       <Typography variant="h6">{safra.nome}</Typography>
@@ -404,16 +390,6 @@ const PageContainer = styled.div`
   padding: 0 ${({ theme }) => theme.spacing.md};
 `;
 
-const ContentGrid = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: ${({ theme }) => theme.spacing.lg};
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
 const MainContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -424,33 +400,6 @@ const Sidebar = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};
-`;
-
-const ContentSection = styled.div`
-  background: white;
-  border-radius: ${({ theme }) => theme.borderRadius.medium};
-  padding: ${({ theme }) => theme.spacing.lg};
-  box-shadow: ${({ theme }) => theme.shadows.card};
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 1.1rem;
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  padding-bottom: ${({ theme }) => theme.spacing.sm};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const LocationTag = styled.div`
-  display: inline-flex;
-  align-items: center;
-  padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.sm}`};
-  background-color: ${({ theme }) => theme.colors.backgroundDarker};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  border-radius: 100px;
-  font-size: 0.875rem;
-  margin-top: ${({ theme }) => theme.spacing.xs};
 `;
 
 const InformationCards = styled.div`
@@ -512,12 +461,6 @@ const ChartContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing.md};
 `;
 
-const ActionButtons = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
 const SafraCard = styled.div`
   padding: ${({ theme }) => theme.spacing.md};
   background-color: ${({ theme }) => theme.colors.backgroundDarker};
@@ -539,21 +482,6 @@ const SafraHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: ${({ theme }) => theme.spacing.sm};
-`;
-
-const CulturasList = styled.div`
-  margin: ${({ theme }) => theme.spacing.sm} 0;
-`;
-
-const CulturaItem = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xs};
-  font-size: 0.875rem;
-`;
-
-const CulturaIcon = styled.span`
-  margin-right: ${({ theme }) => theme.spacing.xs};
 `;
 
 const EmptyState = styled.div`

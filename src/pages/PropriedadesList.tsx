@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { 
   Typography, 
   Button, 
@@ -28,13 +29,15 @@ import {
   PropriedadeTag,
   AreaBadge,
   EmptyStateContainer,
-  LoadingContainer
+  LoadingContainer,
 } from './styles/PropriedadesList.styles';
 import type { 
   ViewMode, 
   SortField, 
   SortDirection 
 } from './types/PropriedadesList.types';
+import { deletePropriedade } from '../store/slices/propriedadesSlice';
+import type { AppDispatch } from '../store';
 
 const PropriedadesList: React.FC = () => {
   const { produtorId } = useParams<{ produtorId?: string }>();
@@ -57,6 +60,8 @@ const PropriedadesList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState<SortField>('nome');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
+  const dispatch = useDispatch<AppDispatch>();
 
   const fetchData = async (showRefreshing = false) => {
     if (showRefreshing) {
@@ -97,6 +102,7 @@ const PropriedadesList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [produtorId]);
 
   const handleRefresh = () => {
@@ -140,17 +146,15 @@ const PropriedadesList: React.FC = () => {
     
     setIsDeleting(true);
     try {
-      await propriedadesAPI.delete(propriedadeToDelete.id, propriedadeToDelete.produtorId);
-      
-      // Atualizar estado localmente para remover propriedade excluída
-      setPropriedades(propriedades.filter(p => p.id !== propriedadeToDelete.id));
-      
+      await dispatch(deletePropriedade({ 
+        id: propriedadeToDelete.id, 
+        produtorId: propriedadeToDelete.produtorId 
+      })).unwrap();
       setDeleteModalOpen(false);
     } catch (err) {
       console.error('Erro ao excluir propriedade:', err);
     } finally {
       setIsDeleting(false);
-      setPropriedadeToDelete(null);
     }
   };
 

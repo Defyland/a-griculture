@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { screen } from '@testing-library/dom';
 import { ThemeProvider } from 'styled-components';
 import { Card } from '../../../components/atoms';
 import { theme } from '../../../styles/theme';
@@ -7,7 +8,7 @@ import { theme } from '../../../styles/theme';
 const setStylesToElement = (element: HTMLElement, styleObject: Record<string, string>) => {
   if (element && element.style) {
     Object.keys(styleObject).forEach(key => {
-      (element.style as any)[key] = styleObject[key];
+      (element.style as unknown as Record<string, string>)[key] = styleObject[key];
     });
   }
   return element;

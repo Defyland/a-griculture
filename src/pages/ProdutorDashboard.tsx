@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { PageLayout } from '../components/templates/PageLayout';
 import { PropertyStats } from '../components';
 import { 
-  StatGroup, 
   ProgressBarChart, 
   PieProgressChart, 
   CardWithTitle, 
@@ -12,7 +11,6 @@ import {
 } from '../components/molecules';
 import { Button, Typography } from '../components/atoms';
 import { 
-  FaChartBar, 
   FaMapMarkerAlt, 
   FaLeaf, 
   FaCalendarAlt, 

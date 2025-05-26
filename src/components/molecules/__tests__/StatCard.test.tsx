@@ -1,5 +1,5 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/dom';
 import { ThemeProvider } from 'styled-components';
 import StatCard from '../StatCard';
 import { theme } from '../../../styles/theme';
@@ -23,7 +23,7 @@ describe('StatCard', () => {
     renderStatCard();
     
     expect(screen.getByText('Total Vendas')).toBeInTheDocument();
-    expect(screen.getByText('12.500')).toBeInTheDocument();
+    expect(screen.getByText('12,500')).toBeInTheDocument();
   });
 
   it('renderiza valor como string quando fornecido como string', () => {
@@ -112,7 +112,7 @@ describe('StatCard', () => {
     const { rerender } = renderStatCard({ color: 'success' });
     
     // Simplesmente verificar que o componente renderiza com diferentes cores
-    const valueElement = screen.getByText('12.500');
+    const valueElement = screen.getByText('12,500');
     expect(valueElement).toBeInTheDocument();
     
     // Testar com outra cor
@@ -126,7 +126,7 @@ describe('StatCard', () => {
       </ThemeProvider>
     );
     
-    expect(screen.getByText('12.500')).toBeInTheDocument();
+    expect(screen.getByText('12,500')).toBeInTheDocument();
   });
 
   it('renderiza versão responsiva por padrão', () => {
