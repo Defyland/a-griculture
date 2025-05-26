@@ -16,7 +16,8 @@ import {
   DataTable,
   EntityCard,
   PageHeader,
-  SearchBar
+  SearchBar,
+  ConfirmDeleteModal
 } from '../components/molecules';
 import { useSafras } from '../hooks';
 import { normalizeStatus, getStatusDisplayText } from '../utils/statusUtils';
@@ -52,7 +53,7 @@ const SafrasList: React.FC = () => {
   const { propriedadeId } = useParams<{ propriedadeId?: string }>();
   const navigate = useNavigate();
   const [showCulturasModal, setShowCulturasModal] = useState(false);
-  const [filtroStatus, setFiltroStatus] = useState('todos');
+  const [filtroStatus, setFiltroStatus] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   
   // Adicionar estado para controlar o modo de visualização
@@ -65,7 +66,7 @@ const SafrasList: React.FC = () => {
   // Define se estamos visualizando por propriedade ou geral
   const isViewingByProperty = !!propriedadeId;
 
-  // Usando nosso hook personalizado
+  // Usando nosso hook personalizado - sem filtro no hook, faremos localmente
   const { 
     safras, 
     loading, 
@@ -76,8 +77,13 @@ const SafrasList: React.FC = () => {
     handleAddSafra,
     handleEditSafra,
     handleDeleteClick,
-    handleNavigateToPropriedade
-  } = useSafras(navigate, { propriedadeId, filtroStatus });
+    handleDeleteConfirm,
+    handleNavigateToPropriedade,
+    deleteModalOpen,
+    setDeleteModalOpen,
+    safraToDelete,
+    isDeleting
+  } = useSafras(navigate, { propriedadeId });
 
   // Função para alternar a direção do ordenamento (agora diretamente na tabela)
   const toggleSort = (field: 'nome' | 'ano') => {
@@ -90,8 +96,16 @@ const SafrasList: React.FC = () => {
   };
 
   const filteredAndSortedSafras = safras
-    .filter(safra => filtroStatus === 'todos' || normalizeStatus(safra.status) === filtroStatus)
     .filter(safra => {
+      // Filtro por status
+      if (filtroStatus && filtroStatus !== '') {
+        const statusNormalizado = normalizeStatus(safra.status);
+        if (statusNormalizado !== filtroStatus) {
+          return false;
+        }
+      }
+      
+      // Filtro por texto de pesquisa
       if (!searchTerm) return true;
       
       const searchLower = searchTerm.toLowerCase();
@@ -159,7 +173,6 @@ const SafrasList: React.FC = () => {
             {
               label: 'Status',
               options: [
-                { value: 'todos', label: 'Todos os Status' },
                 { value: 'ativa', label: 'Em andamento' },
                 { value: 'concluida', label: 'Concluída' },
                 { value: 'planejada', label: 'Planejada' }
@@ -591,6 +604,27 @@ const SafrasList: React.FC = () => {
             )}
           </ModalContent>
         </Modal>
+
+        <ConfirmDeleteModal
+          isOpen={deleteModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          onConfirm={handleDeleteConfirm}
+          title="Excluir Safra"
+          itemName={safraToDelete?.nome || ''}
+          itemType="a safra"
+          warningMessage="Esta ação não poderá ser desfeita. Todas as culturas associadas a esta safra também serão excluídas."
+          details={
+            safraToDelete && (
+              <div>
+                <Typography variant="h6">
+                  {safraToDelete.nome} ({safraToDelete.ano})
+                </Typography>
+              </div>
+            )
+          }
+          isLoading={isDeleting}
+          isDisabled={isDeleting}
+        />
       </Container>
     </PageLayout>
   );

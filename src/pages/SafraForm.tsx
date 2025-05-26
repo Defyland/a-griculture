@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { 
   PageLayout, 
   Typography, 
@@ -31,6 +31,7 @@ import {
 const SafraForm: React.FC = () => {
   const { propriedadeId, id } = useParams<{ propriedadeId: string; id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const isEditing = !!id;
   
   const [safra, setSafra] = useState<Partial<SafraExtended>>({
@@ -48,6 +49,29 @@ const SafraForm: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [successMessage, setSuccessMessage] = useState('');
   const [novaCultura, setNovaCultura] = useState('');
+  
+  // Função para determinar o caminho de redirecionamento baseado no contexto
+  const getRedirectPath = () => {
+    // Verificar se veio de uma página específica através do state
+    const fromPath = location.state?.from;
+    
+    if (fromPath) {
+      return fromPath;
+    }
+    
+    // Se tem propriedadeId, voltar para as safras da propriedade
+    if (propriedadeId) {
+      return `/propriedades/${propriedadeId}/safras`;
+    }
+    
+    // Se está editando, tentar voltar para os detalhes da safra
+    if (isEditing && id && propriedadeId) {
+      return `/propriedades/${propriedadeId}/safras/${id}`;
+    }
+    
+    // Caso padrão: lista de safras
+    return '/safras';
+  };
   
   // Buscar os dados da safra se estiver editando
   useEffect(() => {
@@ -191,14 +215,10 @@ const SafraForm: React.FC = () => {
         setSuccessMessage('Safra criada com sucesso!');
       }
       
-      // Redirecionar após 2 segundos
+      // Redirecionar após 1.5 segundos
       setTimeout(() => {
-        if (propriedadeId) {
-          navigate(`/propriedades/${propriedadeId}/safras`);
-        } else {
-          navigate('/safras');
-        }
-      }, 2000);
+        navigate(getRedirectPath());
+      }, 1500);
     } catch (err) {
       console.error('Erro ao salvar safra:', err);
       setErrors({
@@ -210,11 +230,7 @@ const SafraForm: React.FC = () => {
   };
   
   const handleCancel = () => {
-    if (propriedadeId) {
-      navigate(`/propriedades/${propriedadeId}/safras`);
-    } else {
-      navigate('/safras');
-    }
+    navigate(getRedirectPath());
   };
   
   // Preparar os breadcrumbs

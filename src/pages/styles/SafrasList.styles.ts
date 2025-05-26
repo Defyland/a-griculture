@@ -232,4 +232,11 @@ export const DetailValue = styled.div`
   align-items: center;
   flex-wrap: wrap;
   flex: 1;
+`;
+
+// Componente para mensagens de erro na confirmação de exclusão
+export const ErrorText = styled.span`
+  margin-top: 0.5rem;
+  font-size: ${({ theme }) => theme.fontSizes.tiny};
+  color: ${({ theme }) => theme.colors.danger};
 `; 

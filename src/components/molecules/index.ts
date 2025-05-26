@@ -17,4 +17,5 @@ export { default as EntityCard } from './EntityCard';
 export { default as ProgressBarChart } from './ProgressBarChart';
 export { default as PieProgressChart } from './PieProgressChart';
 export { default as StatCard } from './StatCard';
-export { default as StatGroup } from './StatGroup'; 
+export { default as StatGroup } from './StatGroup';
+export { default as ConfirmDeleteModal } from './ConfirmDeleteModal'; 

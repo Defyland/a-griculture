@@ -133,7 +133,9 @@ const SafraDetails: React.FC = () => {
     <div style={{ display: 'flex', gap: '8px' }}>
       <Button 
         variant="outlined" 
-        onClick={() => navigate(`/propriedades/${safra?.propriedadeId}/safras/editar/${safra?.id}`)}
+        onClick={() => navigate(`/propriedades/${safra?.propriedadeId}/safras/editar/${safra?.id}`, {
+          state: { from: `/propriedades/${safra?.propriedadeId}/safras/${safra?.id}` }
+        })}
         rounded
         icon="✏️"
       >
@@ -306,7 +308,7 @@ const SafraDetails: React.FC = () => {
                 <StatusStep>
                   <StatusStepDot active={true} />
                   <StatusStepContent>
-                    <StatusStepTitle>Safra Planejada</StatusStepTitle>
+                    <StatusStepTitle>Safra Planejada - </StatusStepTitle>
                     <StatusStepDate>01/01/{safra.ano}</StatusStepDate>
                   </StatusStepContent>
                 </StatusStep>
@@ -314,7 +316,7 @@ const SafraDetails: React.FC = () => {
                 <StatusStep>
                   <StatusStepDot active={safra.status === 'ativa' || safra.status === 'concluida'} />
                   <StatusStepContent>
-                    <StatusStepTitle>Safra Ativa</StatusStepTitle>
+                    <StatusStepTitle>Safra Ativa - </StatusStepTitle>
                     <StatusStepDate>
                       {safra.status === 'ativa' || safra.status === 'concluida'
                         ? `15/02/${safra.ano}`
@@ -326,7 +328,7 @@ const SafraDetails: React.FC = () => {
                 <StatusStep>
                   <StatusStepDot active={safra.status === 'concluida'} />
                   <StatusStepContent>
-                    <StatusStepTitle>Safra Concluída</StatusStepTitle>
+                    <StatusStepTitle>Safra Concluída - </StatusStepTitle>
                     <StatusStepDate>
                       {safra.status === 'concluida'
                         ? `30/11/${safra.ano}`
@@ -348,7 +350,9 @@ const SafraDetails: React.FC = () => {
                 variant="outlined" 
                 fullWidth 
                 style={{ marginBottom: '0.5rem' }}
-                onClick={() => navigate(`/propriedades/${safra.propriedadeId}/safras/editar/${safra.id}`)}
+                onClick={() => navigate(`/propriedades/${safra.propriedadeId}/safras/editar/${safra.id}`, {
+                  state: { from: `/propriedades/${safra.propriedadeId}/safras/${safra.id}` }
+                })}
               >
                 Editar Safra
               </Button>

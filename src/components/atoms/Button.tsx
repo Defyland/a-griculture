@@ -10,11 +10,19 @@ import type { StyledButtonProps } from './styles/Button.styles';
 
 // Função para filtrar propriedades que não devem ir para o DOM
 const filterDOMProps = (props: Record<string, unknown>) => {
-   
-  const { 
-    ...domProps 
-  } = props;
-  return domProps;
+  const propsToFilter = [
+    'variant', 'size', 'fullWidth', 'isLoading', 'icon', 
+    'iconPosition', 'rounded', 'elevated', 'active', 'badge'
+  ];
+  
+  const filteredProps: Record<string, unknown> = {};
+  Object.keys(props).forEach(key => {
+    if (!propsToFilter.includes(key)) {
+      filteredProps[key] = props[key];
+    }
+  });
+  
+  return filteredProps;
 };
 
 // Componente de botão base
@@ -50,6 +58,7 @@ const ButtonBase = ({
       ) : (
         <>
           {icon && iconPosition === 'left' && icon}
+          
           {children}
           {icon && iconPosition === 'right' && icon}
           {badge && <BadgeContainer>{badge}</BadgeContainer>}

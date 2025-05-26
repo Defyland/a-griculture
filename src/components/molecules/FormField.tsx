@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { FormLabel, Input } from '../atoms';
 import type { FormFieldProps } from './types/FormField.types';
-import { FormFieldContainer } from './styles/FormField.styles';
+import { FormFieldContainer, ErrorMessage } from './styles/FormField.styles';
 
 export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
   ({ label, name, error, required, disabled, fullWidth, ...props }, ref) => {
@@ -20,6 +20,11 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
           aria-describedby={error ? `${name}-error` : undefined}
           {...props}
         />
+        {error && (
+          <ErrorMessage id={`${name}-error`}>
+            {error}
+          </ErrorMessage>
+        )}
       </FormFieldContainer>
     );
   }

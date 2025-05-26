@@ -59,7 +59,9 @@ const SelecionarProdutor: React.FC = () => {
   };
 
   const handleNovoProdutorClick = () => {
-    navigate('/produtores/novo');
+    navigate('/produtores/novo', {
+      state: { from: '/propriedades/selecionar-produtor' }
+    });
   };
 
   if (loading) {

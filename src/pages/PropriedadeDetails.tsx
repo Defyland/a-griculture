@@ -108,6 +108,9 @@ const PropriedadeDetails: React.FC = () => {
     return items;
   };
 
+  const handlePrintDocument = () => {
+    window.print();
+  };
   // Botões de ação
   const getActionButtons = () => (
     <div style={{ display: 'flex', gap: '8px' }}>
@@ -316,17 +319,9 @@ const PropriedadeDetails: React.FC = () => {
                 </Button>
                 
                 <Button 
-                  variant="outlined" 
-                  fullWidth
-                  onClick={() => {}}
-                >
-                  Relatório
-                </Button>
-                
-                <Button 
                   variant="text" 
                   fullWidth
-                  onClick={() => {}}
+                  onClick={handlePrintDocument}
                 >
                   Imprimir
                 </Button>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
   PageLayout, 
@@ -39,6 +39,7 @@ const ProdutorForm: React.FC<ProdutorFormProps> = ({ isReadOnly = false }) => {
   const { id } = useParams<{ id?: string }>();
   const isEditing = !!id;
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   
   const { currentProdutor, status, error } = useSelector((state: RootState) => state.produtores);
@@ -52,6 +53,29 @@ const ProdutorForm: React.FC<ProdutorFormProps> = ({ isReadOnly = false }) => {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Função para determinar o caminho de redirecionamento baseado no contexto
+  const getRedirectPath = (produtorId?: string) => {
+    // Verificar se veio de uma página específica através do state
+    const fromPath = location.state?.from;
+    
+    if (fromPath) {
+      return fromPath;
+    }
+    
+    // Se está criando um produtor e veio da seleção de produtor para propriedade
+    if (!isEditing && location.pathname.includes('/propriedades/')) {
+      return produtorId ? `/produtores/${produtorId}/propriedades/novo` : '/propriedades/selecionar-produtor';
+    }
+    
+    // Se está editando, voltar para os detalhes do produtor
+    if (isEditing && produtorId) {
+      return `/produtores/${produtorId}`;
+    }
+    
+    // Caso padrão: lista de produtores
+    return '/produtores';
+  };
 
   // Buscar dados do produtor quando for edição
   useEffect(() => {
@@ -116,32 +140,32 @@ const ProdutorForm: React.FC<ProdutorFormProps> = ({ isReadOnly = false }) => {
     
     if (Object.keys(errors).length === 0) {
       try {
+        let produtorId: string | undefined;
+        
         if (isEditing && currentProdutor) {
-          await dispatch(updateProdutor({
+          const updatedProdutor = await dispatch(updateProdutor({
             ...currentProdutor,
             nome: formValues.nome,
             documentoCpfCnpj: formValues.documentoCpfCnpj,
             tipoDocumento: formValues.tipoDocumento,
           })).unwrap();
           setSuccessMessage('Produtor atualizado com sucesso!');
+          produtorId = updatedProdutor.id;
         } else {
-          await dispatch(createProdutor({
+          const newProdutor = await dispatch(createProdutor({
             nome: formValues.nome,
             documentoCpfCnpj: formValues.documentoCpfCnpj,
             tipoDocumento: formValues.tipoDocumento,
           })).unwrap();
           setSuccessMessage('Produtor criado com sucesso!');
-          
-          // Limpar formulário após criar
-          if (!isEditing) {
-            setFormValues({
-              nome: '',
-              documentoCpfCnpj: '',
-              tipoDocumento: 'CPF',
-            });
-            setSubmitAttempted(false);
-          }
+          produtorId = newProdutor.id;
         }
+        
+        // Redirecionar após 1.5 segundos
+        setTimeout(() => {
+          navigate(getRedirectPath(produtorId));
+        }, 1500);
+        
       } catch (error) {
         console.error('Erro ao salvar produtor:', error);
       }
@@ -181,7 +205,7 @@ const ProdutorForm: React.FC<ProdutorFormProps> = ({ isReadOnly = false }) => {
   };
 
   const handleCancel = () => {
-    navigate('/produtores');
+    navigate(getRedirectPath());
   };
 
   // Mostrar loading enquanto busca dados

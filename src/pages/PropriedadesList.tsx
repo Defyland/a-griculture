@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { 
-  Typography, 
-  Button, 
-  Spinner,
-  EntityCardGrid 
-} from '../components/atoms';
+import { Typography, Button, Spinner, EntityCardGrid } from '../components/atoms';
 import { PageLayout } from '../components/templates/PageLayout';
 import { 
-  Modal, 
-  ModalFooterActions,
-  ActionMenu, 
-  DataTable, 
   EntityCard,
   PageHeader, 
-  SearchBar 
+  SearchBar,
+  ActionMenu,
+  DataTable,
+  ConfirmDeleteModal
 } from '../components/molecules';
 import type { Produtor, Propriedade } from '../types';
 import { produtoresAPI, propriedadesAPI } from '../services/api';
@@ -60,6 +54,7 @@ const PropriedadesList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState<SortField>('nome');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [filtroEstado, setFiltroEstado] = useState('');
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -119,15 +114,23 @@ const PropriedadesList: React.FC = () => {
   };
 
   const handleEditPropriedade = (id: string) => {
+    const currentPath = produtorId ? `/produtores/${produtorId}/propriedades` : '/propriedades';
+    
     if (produtorId) {
-      navigate(`/produtores/${produtorId}/propriedades/editar/${id}`);
+      navigate(`/produtores/${produtorId}/propriedades/editar/${id}`, {
+        state: { from: currentPath }
+      });
     } else {
       // Se não estamos visualizando por produtor, precisamos obter o produtorId da propriedade
       const propriedade = propriedades.find(p => p.id === id);
       if (propriedade && propriedade.produtorId) {
-        navigate(`/produtores/${propriedade.produtorId}/propriedades/editar/${id}`);
+        navigate(`/produtores/${propriedade.produtorId}/propriedades/editar/${id}`, {
+          state: { from: currentPath }
+        });
       } else {
-        navigate(`/propriedades/editar/${id}`);
+        navigate(`/propriedades/editar/${id}`, {
+          state: { from: currentPath }
+        });
       }
     }
   };
@@ -150,7 +153,11 @@ const PropriedadesList: React.FC = () => {
         id: propriedadeToDelete.id, 
         produtorId: propriedadeToDelete.produtorId 
       })).unwrap();
+      
+      // Atualizar a lista de propriedades removendo a propriedade excluída
+      setPropriedades(prev => prev.filter(p => p.id !== propriedadeToDelete.id));
       setDeleteModalOpen(false);
+      setPropriedadeToDelete(null);
     } catch (err) {
       console.error('Erro ao excluir propriedade:', err);
     } finally {
@@ -179,6 +186,11 @@ const PropriedadesList: React.FC = () => {
         (produtores[propriedade.produtorId] && produtores[propriedade.produtorId].toLowerCase().includes(searchLower))
       );
     })
+    .filter(propriedade => {
+      // Filtro por estado
+      if (!filtroEstado) return true;
+      return propriedade.estado === filtroEstado;
+    })
     .sort((a, b) => {
       const modifier = sortDirection === 'asc' ? 1 : -1;
       
@@ -198,6 +210,9 @@ const PropriedadesList: React.FC = () => {
       setSortDirection('asc');
     }
   };
+
+  // Obter lista única de estados para o filtro
+  const estadosDisponiveis = Array.from(new Set(propriedades.map(p => p.estado))).sort();
 
   return (
     <PageLayout>
@@ -276,6 +291,16 @@ const PropriedadesList: React.FC = () => {
                 onClick: () => setViewMode('table')
               }
             ]}
+            filters={[
+              {
+                label: 'Estado',
+                options: [
+                  ...estadosDisponiveis.map(estado => ({ value: estado, label: estado }))
+                ],
+                value: filtroEstado,
+                onChange: (value) => setFiltroEstado(value)
+              }
+            ]}
           />
           
           {filteredAndSortedPropriedades.length === 0 ? (
@@ -288,10 +313,13 @@ const PropriedadesList: React.FC = () => {
               </Typography>
               <Button 
                 variant="text" 
-                onClick={() => setSearchTerm('')}
+                onClick={() => {
+                  setSearchTerm('');
+                  setFiltroEstado('');
+                }}
                 style={{ marginTop: '1rem' }}
               >
-                Limpar pesquisa
+                Limpar filtros
               </Button>
             </EmptyStateContainer>
           ) : viewMode === 'grid' ? (
@@ -564,21 +592,17 @@ const PropriedadesList: React.FC = () => {
         </>
       )}
 
-      <Modal
+      <ConfirmDeleteModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
         title="Confirmar Exclusão"
-      >
-        <div>
-          <Typography variant="h5">
-            Você tem certeza que deseja excluir esta propriedade?
-          </Typography>
-          <Typography variant="body1">
-            Esta ação não pode ser desfeita. Todos os dados associados a esta propriedade serão perdidos.
-          </Typography>
-          
-          {propriedadeToDelete && (
-            <div style={{ margin: '1rem 0' }}>
+        itemName={propriedadeToDelete?.nome || ''}
+        itemType="esta propriedade"
+        warningMessage="Esta ação não pode ser desfeita. Todos os dados associados a esta propriedade serão perdidos."
+        details={
+          propriedadeToDelete && (
+            <div>
               <Typography variant="h6">
                 {propriedadeToDelete.nome}
               </Typography>
@@ -586,18 +610,11 @@ const PropriedadesList: React.FC = () => {
                 {propriedadeToDelete.cidade}/{propriedadeToDelete.estado} • {formatArea(propriedadeToDelete.areaTotal)}
               </Typography>
             </div>
-          )}
-          
-          <ModalFooterActions
-            onCancel={() => setDeleteModalOpen(false)}
-            cancelText="Cancelar"
-            confirmText="Excluir Propriedade"
-            onConfirm={handleDeleteConfirm}
-            isConfirmLoading={isDeleting}
-            isConfirmDisabled={isDeleting}
-          />
-        </div>
-      </Modal>
+          )
+        }
+        isLoading={isDeleting}
+        isDisabled={isDeleting}
+      />
     </PageLayout>
   );
 };

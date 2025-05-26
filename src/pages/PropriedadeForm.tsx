@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   PageLayout, 
   Typography, 
@@ -36,16 +36,31 @@ const PropriedadeForm: React.FC = () => {
   const { id, produtorId } = useParams<{ id?: string; produtorId?: string }>();
   const isEditing = !!id;
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Declaração dos estados antes de sua utilização
   const [selectedProdutorId, setSelectedProdutorId] = useState<string | undefined>(produtorId);
   
-  // Agora podemos usar selectedProdutorId
-  // Obter o caminho de redirecionamento correto
+  // Função para determinar o caminho de redirecionamento baseado no contexto
   const getRedirectPath = () => {
+    // Verificar se veio de uma página específica através do state
+    const fromPath = location.state?.from;
+    
+    if (fromPath) {
+      return fromPath;
+    }
+    
+    // Se tem produtorId, voltar para as propriedades do produtor
     if (produtorId || selectedProdutorId) {
       return `/produtores/${produtorId || selectedProdutorId}/propriedades`;
     }
+    
+    // Se está editando, tentar voltar para os detalhes da propriedade
+    if (isEditing && id) {
+      return `/propriedades/${id}`;
+    }
+    
+    // Caso padrão: lista de propriedades
     return '/propriedades';
   };
   
@@ -103,9 +118,10 @@ const PropriedadeForm: React.FC = () => {
       if (isEditing && id) {
         try {
           console.log(`Buscando dados da propriedade com ID: ${id}`);
-          const propriedade = await propriedadesAPI.getById(id);
+          const result = await propriedadesAPI.getById(id);
           
-          if (propriedade) {
+          if (result) {
+            const propriedade = result;
             console.log('Propriedade encontrada:', propriedade);
             setFormValues({
               nome: propriedade.nome,
@@ -211,23 +227,27 @@ const PropriedadeForm: React.FC = () => {
       
       if (isEditing) {
         const editAction = async () => {
-          if (!id) throw new Error('ID da propriedade não fornecido');
-          
           console.log(`Atualizando propriedade ${id} com dados:`, dadosPropriedade);
           
-          // Recuperar a propriedade original para preservar seu array de safras
-          const propriedadeOriginal = await propriedadesAPI.getById(id);
+          if (!id) {
+            throw new Error('ID da propriedade não fornecido');
+          }
           
-          if (!propriedadeOriginal) {
+          // Recuperar a propriedade original para preservar seu array de safras
+          const propriedadeOriginalResult = await propriedadesAPI.getById(id);
+          
+          if (!propriedadeOriginalResult || !propriedadeOriginalResult.safras) {
             throw new Error('Propriedade original não encontrada');
           }
           
-          // Criar um objeto Propriedade completo - usando spread operator para garantir que é um novo objeto
+          const propriedadeOriginal = propriedadeOriginalResult;
+          
+          // Criar um objeto Propriedade completo para o update
           const propriedadeCompleta = {
             ...dadosPropriedade,
             id,
             // Criar uma cópia do array de safras para evitar mutação do objeto original
-            safras: propriedadeOriginal.safras ? [...propriedadeOriginal.safras] : [],
+            safras: [...propriedadeOriginal.safras],
             produtorId: targetProdutorId || ''  // Assegurar que produtorId nunca é undefined
           };
           
@@ -235,8 +255,8 @@ const PropriedadeForm: React.FC = () => {
           await propriedadesAPI.update(propriedadeCompleta);
           
           // Se tiver produtor específico e o ID mudou (transferência)
-          if (targetProdutorId && targetProdutorId !== propriedadeProdutorId) {
-            console.log(`Propriedade transferida do produtor ${propriedadeProdutorId} para ${targetProdutorId}`);
+          if (produtorId && targetProdutorId !== produtorId) {
+            console.log(`Transferindo propriedade do produtor ${produtorId} para ${targetProdutorId}`);
           }
         };
         

@@ -101,7 +101,9 @@ const ProdutorDetails: React.FC = () => {
     <div style={{ display: 'flex', gap: '8px' }}>
       <Button 
         variant="outlined" 
-        onClick={() => navigate(`/produtores/editar/${id}`)}
+        onClick={() => navigate(`/produtores/editar/${id}`, {
+          state: { from: `/produtores/${id}` }
+        })}
         rounded
         icon="✏️"
       >
@@ -120,7 +122,9 @@ const ProdutorDetails: React.FC = () => {
   
   const handleAddPropriedade = () => {
     if (!id) return;
-    navigate(`/produtores/${id}/propriedades/novo`);
+    navigate(`/produtores/${id}/propriedades/novo`, {
+      state: { from: `/produtores/${id}` }
+    });
   };
   
   // Navegação para propriedades

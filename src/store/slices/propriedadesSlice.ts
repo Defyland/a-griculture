@@ -35,11 +35,12 @@ export const fetchPropriedadeById = createAsyncThunk(
 export const createPropriedade = createAsyncThunk(
   'propriedades/create',
   async (data: { propriedade: Omit<Propriedade, 'id' | 'safras'>; produtorId: string }) => {
+    const { propriedade, produtorId } = data;
     const propriedadeWithSafras = {
-      ...data.propriedade,
+      ...propriedade,
       safras: [],
     } as Omit<Propriedade, 'id'>;
-    const response = await propriedadesAPI.create(propriedadeWithSafras, data.produtorId);
+    const response = await propriedadesAPI.create(propriedadeWithSafras, produtorId);
     return response;
   }
 );

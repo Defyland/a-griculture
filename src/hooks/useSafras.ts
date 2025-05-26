@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import type { NavigateFunction } from 'react-router-dom';
 import { safrasAPI, propriedadesAPI, produtoresAPI } from '../services/api';
+import { deleteSafra } from '../store/slices/safrasSlice';
+import type { AppDispatch } from '../store';
 import type { Safra, Propriedade } from '../types';
 import type { SafraCompleta } from '../pages/types/SafraList.types';
 
 interface UseSafrasOptions {
   propriedadeId?: string;
-  filtroStatus?: string;
 }
 
 interface UseSafrasResult {
@@ -19,22 +21,35 @@ interface UseSafrasResult {
   handleAddSafra: () => void;
   handleEditSafra: (safra: Safra) => void;
   handleDeleteClick: (safra: Safra) => void;
+  handleDeleteConfirm: () => Promise<void>;
   handleNavigateToPropriedade: (propId: string) => void;
   setSelectedSafra: React.Dispatch<React.SetStateAction<Safra | null>>;
   selectedSafra: Safra | null;
+  // Estados para o modal de exclusão
+  deleteModalOpen: boolean;
+  setDeleteModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  safraToDelete: Safra | null;
+  setSafraToDelete: React.Dispatch<React.SetStateAction<Safra | null>>;
+  isDeleting: boolean;
 }
 
 export const useSafras = (
   navigate: NavigateFunction, 
   options: UseSafrasOptions = {}
 ): UseSafrasResult => {
-  const { propriedadeId, filtroStatus = 'todos' } = options;
+  const { propriedadeId } = options;
+  const dispatch = useDispatch<AppDispatch>();
 
   const [safras, setSafras] = useState<SafraCompleta[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSafra, setSelectedSafra] = useState<Safra | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [propriedade, setPropriedade] = useState<Propriedade | null>(null);
+  
+  // Estados para o modal de exclusão
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [safraToDelete, setSafraToDelete] = useState<Safra | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -44,15 +59,7 @@ export const useSafras = (
       // Se temos um ID de propriedade, buscamos safras específicas desta propriedade
       if (propriedadeId) {
         const safrasDaPropriedade = await safrasAPI.getByPropriedade(propriedadeId);
-        
-        // Filtrar por status se necessário
-        safrasData = filtroStatus === 'todos' 
-          ? safrasDaPropriedade 
-          : safrasDaPropriedade.filter(safra => {
-              // Mapeamento simplificado de status
-              const status = safra.status?.toLowerCase() || '';
-              return filtroStatus === status;
-            });
+        safrasData = safrasDaPropriedade;
         
         // Buscar detalhes da propriedade
         const propData = await propriedadesAPI.getById(propriedadeId);
@@ -64,21 +71,12 @@ export const useSafras = (
         // Buscar todas as safras
         const todasSafras = await safrasAPI.getAll();
         
-        // Filtrar por status se necessário
-        const safrasFiltradas = filtroStatus === 'todos' 
-          ? todasSafras 
-          : todasSafras.filter(safra => {
-              // Mapeamento simplificado de status
-              const status = safra.status?.toLowerCase() || '';
-              return filtroStatus === status;
-            });
-        
         // Buscar detalhes de propriedades e produtores
         const todasPropriedades = await propriedadesAPI.getAll();
         const todosProdutores = await produtoresAPI.getAll();
         
         // Mapear as safras com detalhes completos
-        safrasData = safrasFiltradas.map(safra => {
+        safrasData = todasSafras.map(safra => {
           const propriedade = todasPropriedades.find(p => p.id === safra.propriedadeId);
           let produtor = null;
           
@@ -106,7 +104,7 @@ export const useSafras = (
   useEffect(() => {
     fetchData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [propriedadeId, filtroStatus]);
+  }, [propriedadeId]);
 
   const handleViewCulturas = (safra: Safra) => {
     setSelectedSafra(safra);
@@ -114,7 +112,10 @@ export const useSafras = (
 
   const handleAddSafra = () => {
     if (propriedadeId) {
-      navigate(`/propriedades/${propriedadeId}/safras/novo`);
+      const currentPath = `/propriedades/${propriedadeId}/safras`;
+      navigate(`/propriedades/${propriedadeId}/safras/novo`, {
+        state: { from: currentPath }
+      });
     } else {
       // Se não estamos vendo por propriedade, redirecionar para o seletor de propriedades
       navigate('/safras/selecionar-propriedade');
@@ -126,12 +127,38 @@ export const useSafras = (
   };
 
   const handleEditSafra = (safra: Safra) => {
-    navigate(`/propriedades/${safra.propriedadeId}/safras/editar/${safra.id}`);
+    const currentPath = propriedadeId ? `/propriedades/${propriedadeId}/safras` : '/safras';
+    navigate(`/propriedades/${safra.propriedadeId}/safras/editar/${safra.id}`, {
+      state: { from: currentPath }
+    });
   };
 
   const handleDeleteClick = (safra: Safra) => {
-    console.log('Excluir safra:', safra.id);
-    // Implementação da exclusão seria feita aqui
+    setSafraToDelete(safra);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!safraToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      await dispatch(deleteSafra({ 
+        id: safraToDelete.id, 
+        propriedadeId: safraToDelete.propriedadeId 
+      })).unwrap();
+      
+      // Fechar modal e limpar estado primeiro
+      setDeleteModalOpen(false);
+      setSafraToDelete(null);
+      
+      // Recarregar os dados para garantir consistência
+      await fetchData();
+    } catch (err) {
+      console.error('Erro ao excluir safra:', err);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return {
@@ -144,8 +171,14 @@ export const useSafras = (
     handleAddSafra,
     handleEditSafra,
     handleDeleteClick,
+    handleDeleteConfirm,
     handleNavigateToPropriedade,
     setSelectedSafra,
-    selectedSafra
+    selectedSafra,
+    deleteModalOpen,
+    setDeleteModalOpen,
+    safraToDelete,
+    setSafraToDelete,
+    isDeleting
   };
 }; 

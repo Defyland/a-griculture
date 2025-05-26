@@ -304,7 +304,9 @@ const PropriedadeDetailsPage: React.FC = () => {
                 <Button 
                   variant="text" 
                   size="small"
-                  onClick={() => navigate(`/propriedades/${id}/safras/novo`)}
+                  onClick={() => navigate(`/propriedades/${id}/safras/novo`, {
+                    state: { from: `/propriedades/${id}` }
+                  })}
                 >
                   + Adicionar Safra
                 </Button>
@@ -315,7 +317,9 @@ const PropriedadeDetailsPage: React.FC = () => {
                   <Typography>Nenhuma safra cadastrada para esta propriedade.</Typography>
                   <Button 
                     variant="primary" 
-                    onClick={() => navigate(`/propriedades/${id}/safras/novo`)}
+                    onClick={() => navigate(`/propriedades/${id}/safras/novo`, {
+                      state: { from: `/propriedades/${id}` }
+                    })}
                     style={{ marginTop: '1rem' }}
                   >
                     Cadastrar Primeira Safra
@@ -382,7 +386,9 @@ const PropriedadeDetailsPage: React.FC = () => {
                 variant="primary" 
                 fullWidth 
                 style={{ marginBottom: '0.5rem' }}
-                onClick={() => navigate(`/propriedades/${id}/safras/novo`)}
+                onClick={() => navigate(`/propriedades/${id}/safras/novo`, {
+                  state: { from: `/propriedades/${id}` }
+                })}
               >
                 Cadastrar Nova Safra
               </Button>
@@ -391,7 +397,9 @@ const PropriedadeDetailsPage: React.FC = () => {
                 variant="outlined" 
                 fullWidth 
                 style={{ marginBottom: '0.5rem' }}
-                onClick={() => navigate(`/propriedades/editar/${id}`)}
+                onClick={() => navigate(`/propriedades/editar/${id}`, {
+                  state: { from: `/propriedades/${id}` }
+                })}
               >
                 Editar Propriedade
               </Button>

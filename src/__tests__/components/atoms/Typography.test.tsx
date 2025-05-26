@@ -3,17 +3,6 @@ import { ThemeProvider } from 'styled-components';
 import { Typography } from '../../../components/atoms';
 import { theme } from '../../../styles/theme';
 
-// Adicionar estilos in-line manualmente para verificação
-const setStylesToElement = (element: HTMLElement, styleObject: Record<string, string>) => {
-  if (element && element.style) {
-    Object.keys(styleObject).forEach(key => {
-      // Usar indexação com tipo
-      element.style.setProperty(key, styleObject[key]);
-    });
-  }
-  return element;
-};
-
 const renderWithTheme = (ui: React.ReactNode) => {
   return render(
     <ThemeProvider theme={theme}>{ui}</ThemeProvider>
@@ -24,8 +13,8 @@ describe('Typography Component', () => {
   test('renders with default variant (body1)', () => {
     renderWithTheme(<Typography data-testid="default-text">Default Text</Typography>);
     const element = screen.getByTestId('default-text');
-    setStylesToElement(element, { fontSize: '1rem' });
-    expect(element).toHaveStyle('font-size: 1rem');
+    expect(element).toBeInTheDocument();
+    expect(element).toHaveTextContent('Default Text');
   });
 
   test('renders with different variants', () => {
@@ -34,8 +23,8 @@ describe('Typography Component', () => {
     );
     
     const h1Element = screen.getByTestId('h1-variant');
-    setStylesToElement(h1Element, { fontSize: '2.5rem' });
-    expect(h1Element).toHaveStyle('font-size: 2.5rem');
+    expect(h1Element).toBeInTheDocument();
+    expect(h1Element).toHaveTextContent('Heading 1');
 
     rerender(
       <ThemeProvider theme={theme}>
@@ -44,8 +33,8 @@ describe('Typography Component', () => {
     );
     
     const h2Element = screen.getByTestId('h2-variant');
-    setStylesToElement(h2Element, { fontSize: '2rem' });
-    expect(h2Element).toHaveStyle('font-size: 2rem');
+    expect(h2Element).toBeInTheDocument();
+    expect(h2Element).toHaveTextContent('Heading 2');
   });
 
   test('renders with different colors', () => {
@@ -54,8 +43,8 @@ describe('Typography Component', () => {
     );
     
     const primaryElement = screen.getByTestId('primary-color');
-    setStylesToElement(primaryElement, { color: theme.colors.primary });
-    expect(primaryElement).toHaveStyle(`color: ${theme.colors.primary}`);
+    expect(primaryElement).toBeInTheDocument();
+    expect(primaryElement).toHaveTextContent('Primary Color');
 
     rerender(
       <ThemeProvider theme={theme}>
@@ -64,8 +53,8 @@ describe('Typography Component', () => {
     );
     
     const secondaryElement = screen.getByTestId('secondary-color');
-    setStylesToElement(secondaryElement, { color: theme.colors.secondary });
-    expect(secondaryElement).toHaveStyle(`color: ${theme.colors.secondary}`);
+    expect(secondaryElement).toBeInTheDocument();
+    expect(secondaryElement).toHaveTextContent('Secondary Color');
   });
 
   test('renders with different font weights', () => {
@@ -74,8 +63,8 @@ describe('Typography Component', () => {
     );
     
     const normalElement = screen.getByTestId('normal-weight');
-    setStylesToElement(normalElement, { fontWeight: '400' });
-    expect(normalElement).toHaveStyle('font-weight: 400');
+    expect(normalElement).toBeInTheDocument();
+    expect(normalElement).toHaveTextContent('Normal Weight');
 
     rerender(
       <ThemeProvider theme={theme}>
@@ -84,8 +73,8 @@ describe('Typography Component', () => {
     );
     
     const boldElement = screen.getByTestId('bold-weight');
-    setStylesToElement(boldElement, { fontWeight: '700' });
-    expect(boldElement).toHaveStyle('font-weight: 700');
+    expect(boldElement).toBeInTheDocument();
+    expect(boldElement).toHaveTextContent('Bold Weight');
   });
 
   test('renders with custom className', () => {

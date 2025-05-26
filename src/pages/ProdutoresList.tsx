@@ -6,12 +6,11 @@ import { Typography, Button, Spinner } from '../components/atoms';
 import { PageLayout } from '../components/templates/PageLayout';
 import { 
   DataTable,
-  Modal,
-  ModalFooterActions,
   EntityCard,
   PageHeader,
   SearchBar,
-  ActionMenu
+  ActionMenu,
+  ConfirmDeleteModal
 } from '../components/molecules';
 import { EntityCardGrid } from '../components/atoms';
 import { fetchProdutores, deleteProdutor } from '../store/slices/produtoresSlice';
@@ -22,8 +21,7 @@ import {
   LoadingContainer,
   PropertyDetail,
   DetailLabel,
-  DetailValue,
-  ErrorText
+  DetailValue
 } from './styles/ProdutoresList.styles';
 import { ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
@@ -64,7 +62,9 @@ const ProdutoresList: React.FC = () => {
   };
   
   const handleEditProdutor = (id: string) => {
-    navigate(`/produtores/editar/${id}`);
+    navigate(`/produtores/editar/${id}`, {
+      state: { from: '/produtores' }
+    });
   };
   
   const handleDeleteClick = (produtor: Produtor) => {
@@ -429,7 +429,6 @@ const ProdutoresList: React.FC = () => {
           {
             label: 'Tipo de Documento',
             options: [
-              { value: '', label: 'Todos os tipos' },
               { value: 'CPF', label: 'CPF' },
               { value: 'CNPJ', label: 'CNPJ' }
             ],
@@ -441,26 +440,17 @@ const ProdutoresList: React.FC = () => {
       
       {renderContent()}
       
-      <Modal
+      <ConfirmDeleteModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
         title="Excluir Produtor"
-      >
-        <Typography>
-          Tem certeza que deseja excluir o produtor <strong>{produtorToDelete?.nome}</strong>?
-        </Typography>
-        <ErrorText>
-          Esta ação não poderá ser desfeita. Todas as propriedades e safras associadas a este produtor também serão excluídas.
-        </ErrorText>
-        <ModalFooterActions
-          onCancel={() => setDeleteModalOpen(false)}
-          cancelText="Cancelar"
-          confirmText="Excluir"
-          onConfirm={handleDeleteConfirm}
-          isConfirmLoading={isDeleting}
-          isConfirmDisabled={isDeleting}
-        />
-      </Modal>
+        itemName={produtorToDelete?.nome || ''}
+        itemType="o produtor"
+        warningMessage="Esta ação não poderá ser desfeita. Todas as propriedades e safras associadas a este produtor também serão excluídas."
+        isLoading={isDeleting}
+        isDisabled={isDeleting}
+      />
     </PageLayout>
   );
 };

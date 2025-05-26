@@ -65,7 +65,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             <Button
               variant="text"
               onClick={refreshButton.onClick}
-              icon="🔄"
+              icon="🔄 "
             >
               Atualizar
             </Button>

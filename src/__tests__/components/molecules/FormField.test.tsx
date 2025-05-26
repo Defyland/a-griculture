@@ -78,8 +78,8 @@ describe('FormField Component', () => {
     // Verificar a presença do aria-describedby
     expect(input).toHaveAttribute('aria-describedby', 'telefone-error');
     
-    // Verificar o atributo error diretamente
-    expect(input).toHaveAttribute('error', errorMessage);
+    // Verificar se a mensagem de erro é exibida
+    expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
   
   test('desabilita o input quando disabled=true', () => {
