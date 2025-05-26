@@ -1,0 +1,30 @@
+# <tipo>[escopo opcional]: <descrição>
+#
+# [corpo opcional]
+#
+# [rodapé(s) opcional(is)]
+#
+# --- TIPOS DE COMMIT ---
+# feat:     Nova funcionalidade
+# fix:      Correção de bug
+# docs:     Mudanças na documentação
+# style:    Mudanças que não afetam o significado do código (espaços, formatação, etc)
+# refactor: Mudança de código que não corrige bug nem adiciona funcionalidade
+# perf:     Mudança de código que melhora performance
+# test:     Adição ou correção de testes
+# build:    Mudanças que afetam o sistema de build ou dependências externas
+# ci:       Mudanças nos arquivos de configuração de CI
+# chore:    Outras mudanças que não modificam src ou arquivos de teste
+# revert:   Reverte um commit anterior
+#
+# --- EXEMPLOS ---
+# feat(auth): adiciona autenticação com JWT
+# fix(api): corrige erro de validação no endpoint de usuários
+# docs: atualiza README com instruções de instalação
+# test(components): adiciona testes para componente Button
+# refactor(utils): melhora legibilidade da função formatDate
+#
+# --- BREAKING CHANGES ---
+# Para mudanças que quebram compatibilidade, adicione ! após o tipo:
+# feat!: remove suporte para Node.js 14
+# ou adicione "BREAKING CHANGE:" no rodapé 
