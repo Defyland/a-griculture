@@ -141,6 +141,33 @@ npm run test:coverage
 
 Para mais detalhes sobre como executar e criar testes, consulte a [documentação de testes](docs/TESTES.md).
 
+## 🤝 Contribuindo
+
+Este projeto segue padrões rigorosos de qualidade e organização. Antes de contribuir, consulte:
+
+- **[Guia de Contribuição](CONTRIBUTING.md)** - Padrões de código, commits semânticos e fluxo de trabalho
+- **[Estratégia de Commits](COMMIT_STRATEGY.md)** - Como organizar commits de forma profissional
+
+### 📝 Commits Semânticos
+
+O projeto utiliza **Conventional Commits** para manter um histórico limpo:
+
+```bash
+# Exemplos de commits
+feat(components): adiciona novo componente de filtro
+fix(api): corrige timeout em requisições
+test(hooks): adiciona testes para useFilter
+docs: atualiza documentação da API
+```
+
+### 🔧 Template de Commit
+
+O projeto já está configurado com template de commit:
+
+```bash
+git commit  # Abrirá editor com template pré-configurado
+```
+
 ## 📝 Observações Técnicas
 
 - A aplicação utiliza uma API simulada (mock) para o desenvolvimento. Para informações detalhadas sobre os endpoints disponíveis, consulte a [documentação da API](docs/API.md).
@@ -156,3 +183,5 @@ Para mais detalhes sobre como executar e criar testes, consulte a [documentaçã
 - [Documentação da API](docs/API.md) - Descrição completa dos endpoints da API simulada
 - [Arquitetura do Sistema](docs/ARQUITETURA.md) - Detalhes sobre as decisões arquiteturais e padrões utilizados
 - [Testes](docs/TESTES.md) - Guia completo sobre como executar e criar testes no projeto
+- [Guia de Contribuição](CONTRIBUTING.md) - Padrões de desenvolvimento e commits semânticos
+- [Estratégia de Commits](COMMIT_STRATEGY.md) - Organização e estrutura de commits
