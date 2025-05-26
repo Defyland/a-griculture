@@ -1,0 +1,1 @@
+// Arquivo de estilos para página de detalhes da Safra 
