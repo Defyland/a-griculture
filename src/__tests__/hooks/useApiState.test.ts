@@ -108,7 +108,7 @@ describe('useApiState Hook', () => {
     const [, actions] = result.current;
     
     const successData = 'Dados carregados com sucesso';
-    const mockApiCall = jest.fn().mockResolvedValue(successData);
+    const mockApiCall = jest.fn<() => Promise<string>>().mockResolvedValue(successData);
     const onSuccess = jest.fn();
     
     await act(async () => {
@@ -126,7 +126,7 @@ describe('useApiState Hook', () => {
     const [, actions] = result.current;
     
     const errorMessage = 'Erro na API';
-    const mockApiCall = jest.fn().mockRejectedValue(new Error(errorMessage));
+    const mockApiCall = jest.fn<() => Promise<never>>().mockRejectedValue(new Error(errorMessage));
     const onError = jest.fn();
     
     await act(async () => {
@@ -144,7 +144,7 @@ describe('useApiState Hook', () => {
     const [, actions] = result.current;
     
     // Simulando um erro que não é uma instância de Error
-    const mockApiCall = jest.fn().mockRejectedValue('string error');
+    const mockApiCall = jest.fn<() => Promise<never>>().mockRejectedValue('string error');
     
     await act(async () => {
       await actions.executeApiCall(mockApiCall);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { PageLayout } from '../components/templates/PageLayout';
 import { PropertyStats } from '../components';
@@ -22,13 +22,14 @@ import {
 
 const DemoDashboard = () => {
   const [selectedFilter, setSelectedFilter] = useState('todas');
+  const [searchTerm, setSearchTerm] = useState('');
   
   // Dados de exemplo
   const propriedade = {
     id: '1',
     nome: 'Rancho Verde',
     cidade: 'Goiânia',
-    estado: 'GO',
+    estado: 'GO' as const,
     areaTotal: 3000,
     areaAgricultavel: 2200,
     areaVegetacao: 800,
@@ -37,9 +38,11 @@ const DemoDashboard = () => {
       {
         id: '1',
         nome: 'Safra 2023',
+        ano: 2023,
+        propriedadeId: '1',
         culturas: [
-          { nome: 'Trigo' },
-          { nome: 'Soja' }
+          { id: '1', nome: 'Trigo', safraId: '1' },
+          { id: '2', nome: 'Soja', safraId: '1' }
         ]
       }
     ]
@@ -125,12 +128,28 @@ const DemoDashboard = () => {
   ];
   
   // Filtros disponíveis
-  const filters = [
-    { id: 'todas', label: 'Todas propriedades' },
-    { id: 'rancho-verde', label: 'Rancho Verde' },
-    { id: 'fazenda-sol', label: 'Fazenda Sol Nascente' },
-    { id: 'sitio-flores', label: 'Sítio das Flores' }
+  const filterOptions = [
+    {
+      id: 'propriedade',
+      label: 'Propriedade',
+      options: [
+        { value: 'todas', label: 'Todas propriedades' },
+        { value: 'rancho-verde', label: 'Rancho Verde' },
+        { value: 'fazenda-sol', label: 'Fazenda Sol Nascente' },
+        { value: 'sitio-flores', label: 'Sítio das Flores' }
+      ]
+    }
   ];
+
+  const filterValues = {
+    propriedade: selectedFilter
+  };
+
+  const handleFilterChange = (filterId: string, value: string) => {
+    if (filterId === 'propriedade') {
+      setSelectedFilter(value);
+    }
+  };
   
   return (
     <PageLayout>
@@ -146,10 +165,12 @@ const DemoDashboard = () => {
           </HeaderContent>
           <FilterContainer>
             <FilterSearchBar
-              options={filters}
-              value={selectedFilter}
-              onChange={(value) => setSelectedFilter(value)}
-              placeholder="Filtrar por propriedade"
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              filterOptions={filterOptions}
+              filterValues={filterValues}
+              onFilterChange={handleFilterChange}
+              searchPlaceholder="Filtrar por propriedade"
             />
           </FilterContainer>
         </Header>

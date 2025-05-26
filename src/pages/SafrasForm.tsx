@@ -10,7 +10,7 @@ import {
   ContextHeader
 } from '../components';
 import { safrasAPI, propriedadesAPI } from '../services/api';
-import type { Safra, Propriedade } from '../types';
+import type { Propriedade } from '../types';
 import type { SafraExtended, BreadcrumbItem } from './types/SafrasForm.types';
 import {
   FormContainer,
@@ -161,21 +161,37 @@ const SafrasForm: React.FC = () => {
     setSubmitting(true);
     
     try {
-      const safraToSave: Partial<Safra> = {
-        nome: safra.nome,
-        ano: safra.ano,
-        propriedadeId: propriedadeId,
-        status: safra.status,
-        areaPlantada: Number(safra.areaHectares)
-      };
-      
+      // Validar dados obrigatórios
+      if (!safra.nome || !safra.ano || !propriedadeId) {
+        setErrors({
+          global: 'Todos os campos obrigatórios devem ser preenchidos'
+        });
+        return;
+      }
+
       if (isEditing && id) {
-        // Atualizar safra existente
-        await safrasAPI.update(id, safraToSave);
+        // Atualizar safra existente - precisa do objeto completo
+        const safraCompleta = {
+          id,
+          nome: safra.nome,
+          ano: safra.ano,
+          propriedadeId: propriedadeId,
+          status: safra.status || 'planejada',
+          areaHectares: Number(safra.areaHectares) || 0,
+          culturas: []
+        };
+        await safrasAPI.update(safraCompleta);
         setSuccessMessage('Safra atualizada com sucesso!');
       } else {
-        // Criar nova safra
-        await safrasAPI.create(safraToSave);
+        // Criar nova safra - sem id e culturas
+        const novaSafra = {
+          nome: safra.nome,
+          ano: safra.ano,
+          propriedadeId: propriedadeId,
+          status: safra.status || 'planejada',
+          areaHectares: Number(safra.areaHectares) || 0
+        };
+        await safrasAPI.create(novaSafra, propriedadeId);
         setSuccessMessage('Safra criada com sucesso!');
       }
       

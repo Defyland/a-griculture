@@ -2,12 +2,14 @@
  * Sistema de logging estruturado para aplicação
  */
 
-export enum LogLevel {
-  DEBUG = 0,
-  INFO = 1,
-  WARN = 2,
-  ERROR = 3,
-}
+export const LogLevel = {
+  DEBUG: 0,
+  INFO: 1,
+  WARN: 2,
+  ERROR: 3,
+} as const;
+
+export type LogLevel = (typeof LogLevel)[keyof typeof LogLevel];
 
 interface LogEntry {
   timestamp: string;
@@ -23,7 +25,7 @@ class Logger {
   private static instance: Logger;
   private logs: LogEntry[] = [];
   private maxLogs = 1000;
-  private currentLogLevel = LogLevel.INFO;
+  private currentLogLevel: LogLevel = LogLevel.INFO;
 
   private constructor() {
     // Configurar nível de log baseado no ambiente
@@ -68,7 +70,7 @@ class Logger {
 
     // Console output em desenvolvimento
     if (process.env.NODE_ENV === 'development') {
-      const levelName = LogLevel[entry.level];
+      const levelName = Object.keys(LogLevel).find(key => LogLevel[key as keyof typeof LogLevel] === entry.level) || 'UNKNOWN';
       console.log(`[${levelName}] ${entry.timestamp}: ${entry.message}`, entry.context);
     }
   }

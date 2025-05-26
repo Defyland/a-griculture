@@ -20,7 +20,7 @@ const mockOptions = [
 describe('SelectField', () => {
   it('deve renderizar select field', () => {
     renderWithTheme(
-      <SelectField options={mockOptions} />
+      <SelectField options={mockOptions} label="Selecione uma opção" name="test-select" />
     );
     
     expect(screen.getByRole('combobox')).toBeInTheDocument();
@@ -28,7 +28,7 @@ describe('SelectField', () => {
 
   it('deve renderizar label quando fornecido', () => {
     renderWithTheme(
-      <SelectField options={mockOptions} label="Selecione" />
+      <SelectField options={mockOptions} label="Selecione" name="test-select" />
     );
     
     expect(screen.getByText('Selecione')).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe('SelectField', () => {
   it('deve chamar onChange quando valor muda', () => {
     const mockOnChange = jest.fn();
     renderWithTheme(
-      <SelectField options={mockOptions} onChange={mockOnChange} />
+      <SelectField options={mockOptions} label="Selecione uma opção" name="test-select" onChange={mockOnChange} />
     );
     
     const select = screen.getByRole('combobox');

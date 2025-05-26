@@ -365,7 +365,7 @@ const Dashboard: React.FC = () => {
                       fill="#34C759" 
                       radius={[4, 4, 0, 0]}
                     >
-                      {estadosData.map((entry, index) => (
+                      {estadosData.map((_, index) => (
                         <Cell 
                           key={`cell-${index}`} 
                           fill={COLORS[index % COLORS.length]} 
@@ -395,7 +395,7 @@ const Dashboard: React.FC = () => {
                       stroke="rgba(255,255,255,0.5)"
                       strokeWidth={2}
                     >
-                      {usoSoloData.map((entry, index) => (
+                      {usoSoloData.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -483,7 +483,7 @@ const Dashboard: React.FC = () => {
                       fill="#34C759" 
                       radius={[0, 4, 4, 0]}
                     >
-                      {culturasData.slice(0, 5).map((entry, index) => (
+                      {culturasData.slice(0, 5).map((_, index) => (
                         <Cell 
                           key={`cell-${index}`} 
                           fill={COLORS[index % COLORS.length]} 

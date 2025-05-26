@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { FormLabel, Select } from '../atoms';
 import type { SelectFieldProps } from './types/SelectField.types';
 import { SelectFieldContainer } from './styles/SelectField.styles';

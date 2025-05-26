@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
 import { dashboardAPI } from '../../services/api';
 import type { DashboardData } from '../../types';
 
@@ -19,7 +18,7 @@ const initialState: DashboardState = {
 // Thunks
 export const fetchDashboardData = createAsyncThunk('dashboard/fetchData', async () => {
   const response = await dashboardAPI.getData();
-  return response;
+  return response as DashboardData;
 });
 
 // Slice
@@ -32,7 +31,7 @@ const dashboardSlice = createSlice({
       .addCase(fetchDashboardData.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(fetchDashboardData.fulfilled, (state, action: PayloadAction<DashboardData>) => {
+      .addCase(fetchDashboardData.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.data = action.payload;
       })

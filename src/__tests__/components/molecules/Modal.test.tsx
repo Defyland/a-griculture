@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import Modal, { ModalFooterActions } from '../../../components/molecules/Modal';
+import { theme } from '../../../styles/theme';
 
 // Mock do ReactDOM.createPortal
 jest.mock('react-dom', () => {
@@ -10,27 +11,6 @@ jest.mock('react-dom', () => {
     createPortal: (node: React.ReactNode) => node,
   };
 });
-
-// Mock do tema para o styled-components
-const theme = {
-  borderRadius: {
-    medium: '8px',
-  },
-  shadows: {
-    large: '0 10px 25px rgba(0,0,0,0.1)',
-  },
-  colors: {
-    border: '#e0e0e0',
-    text: '#333',
-    lightText: '#999',
-  },
-  breakpoints: {
-    mobile: '768px',
-  },
-  transitions: {
-    fast: '0.2s ease',
-  },
-};
 
 // Componente de renderização com tema
 const renderWithTheme = (ui: React.ReactNode) => {

@@ -157,11 +157,11 @@ const SafraDetails: React.FC = () => {
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
         <StatusTag status={
-          safra.status === 'ATIVA' ? 'ativa' : 
-          safra.status === 'CONCLUIDA' ? 'concluida' : 'planejada'
+          safra.status === 'ativa' ? 'ativa' : 
+          safra.status === 'concluida' ? 'concluida' : 'planejada'
         }>
-          {safra.status === 'ATIVA' ? '🟢 Ativa' : 
-           safra.status === 'CONCLUIDA' ? '🔵 Concluída' : '🟠 Planejada'}
+          {safra.status === 'ativa' ? '🟢 Ativa' : 
+           safra.status === 'concluida' ? '🔵 Concluída' : '🟠 Planejada'}
         </StatusTag>
         
         {propriedade && (
@@ -244,11 +244,11 @@ const SafraDetails: React.FC = () => {
                   <InfoLabel>Status:</InfoLabel>
                   <InfoValue>
                     <StatusTag status={
-                      safra.status === 'ATIVA' ? 'ativa' : 
-                      safra.status === 'CONCLUIDA' ? 'concluida' : 'planejada'
+                      safra.status === 'ativa' ? 'ativa' : 
+                      safra.status === 'concluida' ? 'concluida' : 'planejada'
                     }>
-                      {safra.status === 'ATIVA' ? '🟢 Ativa' : 
-                       safra.status === 'CONCLUIDA' ? '🔵 Concluída' : '🟠 Planejada'}
+                      {safra.status === 'ativa' ? '🟢 Ativa' : 
+                       safra.status === 'concluida' ? '🔵 Concluída' : '🟠 Planejada'}
                     </StatusTag>
                   </InfoValue>
                 </InfoRow>
@@ -277,7 +277,7 @@ const SafraDetails: React.FC = () => {
                 
                 <InfoRow>
                   <InfoLabel>Área Plantada:</InfoLabel>
-                  <InfoValue>{formatArea(safra.areaPlantada)}</InfoValue>
+                  <InfoValue>{formatArea(safra.areaHectares)}</InfoValue>
                 </InfoRow>
                 
                 {safra.culturas && safra.culturas.length > 0 && (
@@ -312,11 +312,11 @@ const SafraDetails: React.FC = () => {
                 </StatusStep>
                 
                 <StatusStep>
-                  <StatusStepDot active={safra.status === 'ATIVA' || safra.status === 'CONCLUIDA'} />
+                  <StatusStepDot active={safra.status === 'ativa' || safra.status === 'concluida'} />
                   <StatusStepContent>
                     <StatusStepTitle>Safra Ativa</StatusStepTitle>
                     <StatusStepDate>
-                      {safra.status === 'ATIVA' || safra.status === 'CONCLUIDA'
+                      {safra.status === 'ativa' || safra.status === 'concluida'
                         ? `15/02/${safra.ano}`
                         : 'Pendente'}
                     </StatusStepDate>
@@ -324,11 +324,11 @@ const SafraDetails: React.FC = () => {
                 </StatusStep>
                 
                 <StatusStep>
-                  <StatusStepDot active={safra.status === 'CONCLUIDA'} />
+                  <StatusStepDot active={safra.status === 'concluida'} />
                   <StatusStepContent>
                     <StatusStepTitle>Safra Concluída</StatusStepTitle>
                     <StatusStepDate>
-                      {safra.status === 'CONCLUIDA'
+                      {safra.status === 'concluida'
                         ? `30/11/${safra.ano}`
                         : 'Pendente'}
                     </StatusStepDate>

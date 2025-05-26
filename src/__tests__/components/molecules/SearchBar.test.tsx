@@ -2,47 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import SearchBar from '../../../components/molecules/SearchBar';
-
-// Mock do tema para o styled-components
-const theme = {
-  spacing: {
-    xs: '4px',
-    sm: '8px',
-    md: '16px',
-    lg: '24px',
-  },
-  colors: {
-    primary: '#007bff',
-    primaryAlpha: 'rgba(0, 123, 255, 0.1)',
-    text: '#333',
-    textSecondary: '#666',
-    white: '#fff',
-    border: '#ddd',
-    backgroundDarker: '#f5f5f5',
-    disabledBackground: '#f0f0f0',
-    placeholder: '#999',
-  },
-  borderRadius: {
-    small: '4px',
-    medium: '8px',
-  },
-  fontSizes: {
-    small: '14px',
-    medium: '16px',
-  },
-  fontWeights: {
-    medium: 500,
-  },
-  transitions: {
-    fast: '0.2s ease',
-  },
-  breakpoints: {
-    tablet: '768px',
-  },
-  fonts: {
-    primary: 'Arial, sans-serif',
-  },
-};
+import { theme } from '../../../styles/theme';
 
 // Componente de renderização com tema
 const renderWithTheme = (ui: React.ReactNode) => {

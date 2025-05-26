@@ -400,7 +400,7 @@ const PropriedadesList: React.FC = () => {
                           tickMargin={8}
                         />
                         <Tooltip 
-                          formatter={(value, name, props) => {
+                          formatter={(value, _, props) => {
                             const item = props.payload;
                             return [`${value} ha (${item.percentage}%)`, 'Área'];
                           }}

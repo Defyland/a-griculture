@@ -333,7 +333,7 @@ const SafrasList: React.FC = () => {
                               ))}
                             </Pie>
                             <Tooltip 
-                              formatter={(value, name) => [name, 'Cultura']}
+                              formatter={(_, name) => [name, 'Cultura']}
                               contentStyle={{
                                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                                 borderRadius: '8px',
