@@ -1,15 +1,21 @@
+import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
+import { Routes } from './routes';
+import { store } from './store';
 import { theme } from './styles/theme';
-import { GlobalStyles } from './styles/GlobalStyles';
+import GlobalStyles from './styles/GlobalStyles';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   return (
+    <Provider store={store}>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        <div>
-          <h1>Hello World</h1>
-        </div>
+        <ErrorBoundary>
+          <Routes />
+        </ErrorBoundary>
       </ThemeProvider>
+    </Provider>
   );
 }
 
